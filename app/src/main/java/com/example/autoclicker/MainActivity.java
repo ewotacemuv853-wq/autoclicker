@@ -142,8 +142,8 @@ public class MainActivity extends Activity {
                 .setView(input)
                 .setPositiveButton("保存", (d, w) -> {
                     try {
-                        long d = Math.max(10, Long.parseLong(input.getText().toString().trim()));
-                        Prefs.updatePoint(this, position, new ClickPoint(p.x, p.y, d));
+                        long delay = Math.max(10, Long.parseLong(input.getText().toString().trim()));
+                        Prefs.updatePoint(this, position, new ClickPoint(p.x, p.y, delay));
                         refreshPoints();
                         notifyService();
                     } catch (NumberFormatException ignore) { }
@@ -240,7 +240,7 @@ public class MainActivity extends Activity {
             ClickPoint p = pts.get(i);
             displayList.add("#" + (i + 1) + "  (" + p.x + "," + p.y + ")  延迟 " + p.delayMs + "ms");
         }
-        adapter.notifyChanged();
+        adapter.notifyDataSetChanged();
     }
 
     private void refreshSchemes() {
@@ -248,7 +248,7 @@ public class MainActivity extends Activity {
         schemeNames.clear();
         schemeNames.add("(当前 / 未保存)");
         for (Scheme s : schemes) schemeNames.add(s.name);
-        schemeAdapter.notifyChanged();
+        schemeAdapter.notifyDataSetChanged();
     }
 
     @Override

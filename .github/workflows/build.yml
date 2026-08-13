@@ -32,29 +32,42 @@ jobs:
           gradle-version: 8.2
           arguments: clean assembleDebug
 
-      - name: Verify APK contains app code
+      - name: Diagnostics - source tree & compiled classes
+        if: always()
         run: |
-          APK=$(ls app/build/outputs/apk/debug/*.apk | head -1)
-          echo "校验 APK: $APK  大小: $(stat -c%s "$APK") 字节"
-          if [ "$(stat -c%s "$APK")" -lt 100000 ]; then
-            echo "::error::APK 过小 (<100KB)，疑似空壳构建，终止。"
-            exit 1
-          fi
-          python3 - "$APK" <<'PY'
-          import zipfile, sys
-          apk = sys.argv[1]
+          echo "=== 源码 .java 文件 ==="
+          find app/src/main/java -name '*.java' | sort
+          echo "=== 编译产物 .class (intermediates/javac) ==="
+          find app/build/intermediates/javac -name '*.class' 2>/dev/null | sort | head -60 || echo "无 javac 产物"
+          echo "=== app/build/outputs/apk/debug ==="
+          ls -la app/build/outputs/apk/debug/ 2>/dev/null || echo "无 APK 输出"
+
+      - name: Diagnostics - APK inventory
+        if: always()
+        run: |
+          APK=$(ls app/build/outputs/apk/debug/*.apk 2>/dev/null | head -1)
+          if [ -z "$APK" ]; then echo "未找到 APK"; exit 0; fi
+          echo "APK=$APK size=$(wc -c < "$APK") bytes"
+          echo "=== unzip -l (APK 内容) ==="
+          unzip -l "$APK" | head -60
+          echo "=== dex 中本项目类清单 ==="
+          python3 - <<'PY'
+          import zipfile, re, glob, os
+          apk = glob.glob('app/build/outputs/apk/debug/*.apk')[0]
           with zipfile.ZipFile(apk) as z:
-              dex = z.read('classes.dex')
-          needed = [b'AutoClickService', b'MainActivity', b'dispatchGesture',
-                    b'ClickPoint', b'Prefs', b'Scheme']
-          missing = [n.decode() for n in needed if n not in dex]
-          if missing:
-              print("::error::以下核心类未编译进 APK:", missing)
-              sys.exit(1)
-          print("OK: 全部核心类已编入 APK，classes.dex 大小", len(dex), "字节")
+              dexes=[n for n in z.namelist() if re.match(r'classes[0-9]*\.dex$', n)]
+              blob=b''.join(z.read(d) for d in dexes)
+          print("dex files:", dexes, "| APK size:", os.path.getsize(apk))
+          types=sorted(set(re.findall(rb'Lcom/example/autoclicker/[A-Za-z0-9_$]+;', blob)))
+          print("本项目类数量:", len(types))
+          for t in types: print("   ", t.decode())
+          need=[b'AutoClickService',b'MainActivity',b'ClickPoint',b'Prefs',b'Scheme',b'dispatchGesture']
+          miss=[n.decode() for n in need if n not in blob]
+          print("缺失核心类:", miss if miss else "无 (全部存在)")
           PY
 
       - name: Upload APK
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: app-debug

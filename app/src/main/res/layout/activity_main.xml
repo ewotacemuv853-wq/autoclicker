@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:layout_marginTop="16dp" />
+
+        <Button
+            android:id="@+id/btnAccessibility"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="开启无障碍服务"
+            android:layout_marginTop="16dp" />
+
+        <Button
+            android:id="@+id/btnOverlay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="授予悬浮窗权限"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="点击序列"
+            android:layout_marginTop="24dp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/btnAddPoint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="添加点（点屏选位）"
+            android:layout_marginTop="8dp" />
+
+        <ListView
+            android:id="@+id/lvPoints"
+            android:layout_width="match_parent"
+            android:layout_height="160dp"
+            android:layout_marginTop="8dp"
+            android:background="#EEEEEE" />
+
+        <Button
+            android:id="@+id/btnClear"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="清空点击点"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="方案（可保存多套）"
+            android:layout_marginTop="24dp"
+            android:textStyle="bold" />
+
+        <Spinner
+            android:id="@+id/spinnerScheme"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp">
+
+            <Button
+                android:id="@+id/btnSaveScheme"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="保存为方案" />
+
+            <Button
+                android:id="@+id/btnDelScheme"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="删除选中方案"
+                android:layout_marginStart="8dp" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="参数"
+            android:layout_marginTop="24dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="默认点间延迟(ms)："
+            android:layout_marginTop="8dp" />
+        <EditText
+            android:id="@+id/etInterval"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:layout_marginTop="4dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="循环轮数(0=无限)："
+            android:layout_marginTop="8dp" />
+        <EditText
+            android:id="@+id/etLoop"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:layout_marginTop="4dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="防检测"
+            android:layout_marginTop="24dp"
+            android:textStyle="bold" />
+
+        <CheckBox
+            android:id="@+id/cbJitter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="开启随机抖动（防检测）"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="抖动范围(像素)："
+            android:layout_marginTop="4dp" />
+        <EditText
+            android:id="@+id/etJitterPx"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:layout_marginTop="4dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="启停方式"
+            android:layout_marginTop="24dp"
+            android:textStyle="bold" />
+
+        <CheckBox
+            android:id="@+id/cbShake"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="摇一摇启停"
+            android:layout_marginTop="8dp" />
+
+        <CheckBox
+            android:id="@+id/cbVolume"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="音量键启停"
+            android:layout_marginTop="4dp" />
+
+        <Button
+            android:id="@+id/btnSave"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="保存设置"
+            android:layout_marginTop="16dp" />
+    </LinearLayout>
+</ScrollView>

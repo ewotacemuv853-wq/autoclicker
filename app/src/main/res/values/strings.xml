@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">无障碍自动连点器</string>
+    <string name="accessibility_desc">在屏幕上按设定坐标和间隔自动点击，无需 Root。开启后屏幕上会出现悬浮控制条，可开始/停止并重新定位点击点。</string>
+    <string name="hint_scheme_name">方案名称（如：抢购A / 游戏B）</string>
+</resources>

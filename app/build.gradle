@@ -1,0 +1,61 @@
+plugins {
+    id 'com.android.application'
+}
+
+def keystorePropsFile = rootProject.file("keystore.properties")
+def keystoreProps = new Properties()
+if (keystorePropsFile.exists()) {
+    keystoreProps.load(new FileInputStream(keystorePropsFile))
+}
+
+android {
+    namespace 'com.example.autoclicker'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.example.autoclicker"
+        minSdk 24          // dispatchGesture 需要 Android 7.0 (API 24)
+        targetSdk 34
+        versionCode 1
+        versionName "1.0"
+    }
+
+    signingConfigs {
+        release {
+            if (keystorePropsFile.exists()) {
+                storeFile file(keystoreProps['STORE_FILE'])
+                storePassword keystoreProps['STORE_PASSWORD']
+                keyAlias keystoreProps['KEY_ALIAS']
+                keyPassword keystoreProps['KEY_PASSWORD']
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            // 仅在提供了 keystore.properties 时才启用签名；否则仍会产出未签名的 AAB
+            if (keystorePropsFile.exists()) {
+                signingConfig signingConfigs.release
+            }
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    bundle {
+        language {
+            enableSplit = false   // 单语言包，减小配置复杂度
+        }
+        density {
+            enableSplit = true
+        }
+        abi {
+            enableSplit = true
+        }
+    }
+}

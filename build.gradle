@@ -1,0 +1,8 @@
+// AutoClicker root project. Plugins are applied in app/build.gradle.
+plugins {
+    id 'com.android.application' version '8.2.2' apply false
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}

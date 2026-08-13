@@ -30,7 +30,29 @@ jobs:
         uses: gradle/gradle-build-action@v3
         with:
           gradle-version: 8.2
-          arguments: assembleDebug
+          arguments: clean assembleDebug
+
+      - name: Verify APK contains app code
+        run: |
+          APK=$(ls app/build/outputs/apk/debug/*.apk | head -1)
+          echo "校验 APK: $APK  大小: $(stat -c%s "$APK") 字节"
+          if [ "$(stat -c%s "$APK")" -lt 100000 ]; then
+            echo "::error::APK 过小 (<100KB)，疑似空壳构建，终止。"
+            exit 1
+          fi
+          python3 - "$APK" <<'PY'
+          import zipfile, sys
+          apk = sys.argv[1]
+          with zipfile.ZipFile(apk) as z:
+              dex = z.read('classes.dex')
+          needed = [b'AutoClickService', b'MainActivity', b'dispatchGesture',
+                    b'ClickPoint', b'Prefs', b'Scheme']
+          missing = [n.decode() for n in needed if n not in dex]
+          if missing:
+              print("::error::以下核心类未编译进 APK:", missing)
+              sys.exit(1)
+          print("OK: 全部核心类已编入 APK，classes.dex 大小", len(dex), "字节")
+          PY
 
       - name: Upload APK
         uses: actions/upload-artifact@v4

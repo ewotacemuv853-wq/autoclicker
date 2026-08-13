@@ -20,6 +20,16 @@ android {
         versionName "1.0"
     }
 
+    // 显式声明源码/资源目录，避免 AGP 在某些环境把 src/main/java 排除出编译
+    sourceSets {
+        main {
+            java.srcDirs = ['src/main/java']
+            manifest.srcFile 'src/main/AndroidManifest.xml'
+            res.srcDirs = ['src/main/res']
+            resources.srcDirs = ['src/main/resources']
+        }
+    }
+
     signingConfigs {
         release {
             if (keystorePropsFile.exists()) {
@@ -58,4 +68,11 @@ android {
             enableSplit = true
         }
     }
+}
+
+dependencies {
+    // 本工程代码仅用 Android 框架类，但显式引入 appcompat 以走标准 AGP 配置路径，
+    // 规避个别环境下源码未被纳入编译的问题。
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.11.0'
 }

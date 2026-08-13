@@ -32,7 +32,20 @@ cd AutoClicker
 ```
 
 > 注意：本机（生成此工程的机器）没有 Android SDK / Gradle，无法在这里直接出 APK。
-> 请在装有 Android Studio 的电脑上按上面步骤编译。
+> 请在装有 Android Studio 的电脑上按上面步骤编译，或用下面的「方式 C」云端编译。
+
+### 方式 C：GitHub Actions 零安装（推荐给没有 Android Studio 的环境）
+已配好工作流 `.github/workflows/build.yml`，推到 GitHub 后自动云端编译出 debug APK：
+1. 在 github.com 新建一个空仓库（如 `autoclicker`）。
+2. 在工程目录执行：
+   ```bash
+   git remote add origin https://github.com/<你的用户名>/autoclicker.git
+   git branch -M main
+   git push -u origin main
+   ```
+   （推送时密码处用 **Personal Access Token**，GitHub 已不支持账号密码直推）
+3. 打开仓库 **Actions** 标签 → 看到 `Build Debug APK` 跑绿后，点该次运行 → **Artifacts → app-debug** 下载压缩包，解压得到 `app-debug.apk`。
+4. 把 APK 传到手机安装即可（无需本机任何 Android 工具）。
 
 ---
 

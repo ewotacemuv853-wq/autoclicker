@@ -2,8 +2,7 @@
 <accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
     android:description="@string/accessibility_desc"
     android:accessibilityEventTypes="typeAllMask"
-    android:accessibilityFlags="flagDefault"
+    android:accessibilityFlags="flagDefault|flagRequestFilterKeyEvents"
     android:accessibilityFeedbackType="feedbackGeneric"
     android:notificationTimeout="100"
-    android:canPerformGestures="true"
-    android:settingsActivity="com.example.autoclicker/.MainActivity" />
+    android:canPerformGestures="true" />

@@ -22,6 +22,7 @@
         <!-- 无障碍服务：系统据此启动并授予手势权限 -->
         <service
             android:name=".AutoClickService"
+            android:label="@string/service_label"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
             android:exported="true">
             <intent-filter>

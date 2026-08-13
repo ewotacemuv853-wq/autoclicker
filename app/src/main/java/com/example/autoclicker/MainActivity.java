@@ -294,13 +294,13 @@ public class MainActivity extends Activity {
     private boolean isAccessibilityEnabled() {
         String enabled = Settings.Secure.getString(getContentResolver(),
                 Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES);
-        if (enabled != null && enabled.contains("com.example.autoclicker/.AutoClickService")) return true;
+        if (enabled != null && enabled.contains("AutoClickService")) return true;
         AccessibilityManager am = (AccessibilityManager) getSystemService(ACCESSIBILITY_SERVICE);
         if (am == null) return false;
         List<android.accessibilityservice.AccessibilityServiceInfo> list =
                 am.getInstalledAccessibilityServiceList();
         for (android.accessibilityservice.AccessibilityServiceInfo info : list) {
-            if (info.getId() != null && info.getId().contains("com.example.autoclicker/.AutoClickService")) {
+            if (info.getId() != null && info.getId().contains("AutoClickService")) {
                 return true;
             }
         }

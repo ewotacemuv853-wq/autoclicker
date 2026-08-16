@@ -19,6 +19,12 @@
             </intent-filter>
         </activity>
 
+        <!-- 透明全屏“添加点”界面：不依赖悬浮窗权限 -->
+        <activity
+            android:name=".PickActivity"
+            android:exported="false"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
         <!-- 无障碍服务：系统据此启动并授予手势权限 -->
         <service
             android:name=".AutoClickService"

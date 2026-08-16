@@ -88,12 +88,8 @@ public class MainActivity extends Activity {
             }
         });
 
-        findViewById(R.id.btnAddPoint).setOnClickListener(v -> {
-            Intent i = new Intent(AutoClickService.ACTION_PICK_ADD);
-            i.setPackage(getPackageName());
-            sendBroadcast(i);
-            Toast.makeText(this, "请点击屏幕任意位置以添加点", Toast.LENGTH_SHORT).show();
-        });
+        findViewById(R.id.btnAddPoint).setOnClickListener(v ->
+                startActivity(new Intent(MainActivity.this, PickActivity.class)));
 
         findViewById(R.id.btnClear).setOnClickListener(v -> {
             Prefs.clearPoints(this);

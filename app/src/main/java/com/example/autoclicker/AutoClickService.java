@@ -39,7 +39,6 @@ import java.util.List;
 public class AutoClickService extends AccessibilityService {
 
     public static final String ACTION_UPDATE = "com.example.autoclicker.UPDATE";          // activity -> service：重载配置
-    public static final String ACTION_PICK_ADD = "com.example.autoclicker.PICK_ADD";       // activity -> service：进入“添加点”定位
     public static final String ACTION_POINTS_CHANGED = "com.example.autoclicker.POINTS";   // service -> activity：点序列变化
 
     private WindowManager wm;
@@ -47,7 +46,6 @@ public class AutoClickService extends AccessibilityService {
     private final Handler handler = new Handler(Looper.getMainLooper());
 
     private boolean running = false;
-    private boolean pickMode = false;
 
     private List<ClickPoint> points;
     private int cursor = 0;       // 当前点到序列中的位置
@@ -70,8 +68,6 @@ public class AutoClickService extends AccessibilityService {
             if (ACTION_UPDATE.equals(action)) {
                 reloadAndReschedule();
                 updateFloatingText();
-            } else if (ACTION_PICK_ADD.equals(action)) {
-                enterPickMode();
             }
         }
     };
@@ -80,10 +76,6 @@ public class AutoClickService extends AccessibilityService {
         @Override
         public void run() {
             if (!running) return;
-            if (pickMode) {                       // 定位中不点击，稍后重试
-                handler.postDelayed(this, 250);
-                return;
-            }
             if (points == null || points.isEmpty()) {
                 stopClicking();
                 updateFloatingText();
@@ -142,7 +134,6 @@ public class AutoClickService extends AccessibilityService {
         buildFloatingView();
         setupSensors();
         IntentFilter filter = new IntentFilter(ACTION_UPDATE);
-        filter.addAction(ACTION_PICK_ADD);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             registerReceiver(cmdReceiver, filter, Context.RECEIVER_NOT_EXPORTED);
         } else {
@@ -222,7 +213,11 @@ public class AutoClickService extends AccessibilityService {
             toggle();
             updateFloatingText();
         });
-        btnPick.setOnClickListener(v -> enterPickMode());
+        btnPick.setOnClickListener(v -> {
+            Intent i = new Intent(AutoClickService.this, PickActivity.class);
+            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(i);
+        });
 
         floatingView.findViewById(R.id.dragArea).setOnTouchListener(new View.OnTouchListener() {
             private int initialX, initialY;
@@ -273,41 +268,6 @@ public class AutoClickService extends AccessibilityService {
             try { wm.removeView(floatingView); } catch (Exception ignore) { }
             floatingView = null;
         }
-    }
-
-    private void enterPickMode() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
-            Toast.makeText(this, "需要悬浮窗权限才能添加点", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        pickMode = true;
-        View capture = new View(this);
-        WindowManager.LayoutParams cp = new WindowManager.LayoutParams(
-                WindowManager.LayoutParams.MATCH_PARENT,
-                WindowManager.LayoutParams.MATCH_PARENT,
-                overlayType(),
-                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-                        | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN,
-                PixelFormat.TRANSLUCENT);
-        cp.gravity = Gravity.TOP | Gravity.START;
-        capture.setBackgroundColor(0x33000000);
-        capture.setOnTouchListener((v, event) -> {
-            if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                int x = (int) event.getRawX();
-                int y = (int) event.getRawY();
-                ClickPoint p = new ClickPoint(x, y, defaultDelayMs);
-                Prefs.addPoint(this, p);
-                wm.removeView(capture);
-                pickMode = false;
-                loadPrefs();
-                updateFloatingText();
-                notifyPointsChanged();
-                Toast.makeText(this, "已添加点 #" + points.size() + " (" + x + "," + y + ")", Toast.LENGTH_SHORT).show();
-                return true;
-            }
-            return false;
-        });
-        wm.addView(capture, cp);
     }
 
     private void notifyPointsChanged() {
